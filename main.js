@@ -5,6 +5,10 @@ timer_check="";
 drawn_sketch="";
 answer_holder="";
 score=0;
+pmouseX=0;
+pmouseY=0;
+mouseX=0;
+mouseY=0;
 
  function updateCanvas(){
     background("green");
@@ -26,9 +30,12 @@ score=0;
         answer_holder="set";
         score++
         document.getElementById("score").innerHTML="Score =" + score;
-        
-
+        strokeWeigth(13);
+        stroke(0)
+        if(mouseIsPressed){
+            line(pmouseX,pmouseY,mouseX,mouseY);
     } 
+    }
  }
     
     function check_sketch(){
@@ -44,3 +51,21 @@ score=0;
             updateCanvas()
         }
     }
+
+    function classifyCanvas(){
+        classifier.classify(canvas,gotResults)
+      }
+
+      function preload(){
+        classifier = ml5.imageClassifier('DoodleNet')
+    }
+
+    function gotResults(error,results){
+        if(error){
+            console.error(error);
+        }
+        console.log(results);
+        drawn_sketch = results[0].label;
+        document.getElementById('label').innerHTML = 'Label :' + drawn_sketch;
+        document.getElementById('confidence').innerHTML = 'confidence :' + Math.round(results[0].confidence * 100 + '%');
+    }    
